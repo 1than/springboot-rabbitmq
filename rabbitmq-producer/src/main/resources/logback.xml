@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty scope="context" name="log.home" source="logback.log.home"/>
+    <springProperty scope="context" name="application.name" source="spring.application.name"/>
+    <springProperty scope="context" name="LOG_FRAMEWORK_LEVEL" source="logback.log.framework.level"/>
+    <springProperty scope="context" name="LOG_LEVEL" source="logback.log.level"/>
+    <property name="LOG_HOME"   value="./rabbitmq-producer/${application.name}/"/>
+    <property name="ROOT"       value="./rabbitmq-producer/${application.name}/"/>
+    <!-- 日志输出级别 TRACE, DEBUG, INFO, WARN, ERROR, ALL OFF -->
+    <property name="FILESIZE"   value="50MB"/>
+    <property name="MAXHISTORY" value="100"/>
+    <timestamp key="DATETIME" datePattern="yyyy-MM-dd HH:mm:ss"/>
+    <!-- 控制台打印 -->
+    <appender name="STDOUT"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="utf-8">
+            <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} - %m%n
+            </pattern>
+        </encoder>
+    </appender>
+    <!-- ERROR 输入到文件，按日期和文件大小 -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder charset="utf-8">
+            <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} - %m%n
+            </pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${ROOT}%d/error.%i.log</fileNamePattern>
+            <maxHistory>${MAXHISTORY}</maxHistory>
+            <maxFileSize>${FILESIZE}</maxFileSize>
+        </rollingPolicy>
+    </appender>
+
+    <!-- WARN 输入到文件，按日期和文件大小 -->
+    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder charset="utf-8">
+            <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} - %m%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${ROOT}%d/warn.%i.log</fileNamePattern>
+            <maxHistory>${MAXHISTORY}</maxHistory>
+            <maxFileSize>${FILESIZE}</maxFileSize>
+        </rollingPolicy>
+    </appender>
+
+    <!-- INFO 输入到文件，按日期和文件大小 -->
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder charset="utf-8">
+            <pattern>[%-5level] %date{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} - %m%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${ROOT}%d/info.%i.log</fileNamePattern>
+            <maxHistory>${MAXHISTORY}</maxHistory>
+            <maxFileSize>${FILESIZE}</maxFileSize>
+        </rollingPolicy>
+    </appender>
+    <!-- DEBUG 输入到文件，按日期和文件大小 -->
+    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder charset="utf-8">
+            <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} - %m%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${ROOT}%d/debug.%i.log</fileNamePattern>
+            <maxHistory>${MAXHISTORY}</maxHistory>
+            <maxFileSize>${FILESIZE}</maxFileSize>
+        </rollingPolicy>
+    </appender>
+    <!-- TRACE 输入到文件，按日期和文件大小 -->
+    <appender name="TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder charset="utf-8">
+            <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss} [%thread] %logger{36} - %m%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>TRACE</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${ROOT}%d/trace.%i.log</fileNamePattern>
+            <maxHistory>${MAXHISTORY}</maxHistory>
+            <maxFileSize>${FILESIZE}</maxFileSize>
+        </rollingPolicy>
+    </appender>
+
+    <!--日志异步到数据库 -->
+    <!-- 自定义LogDBAppender 拓展DBAppenderBase -->
+    <!--    <appender name="DB"  class="ch.qos.logback.classic.db.DBAppender">
+           <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">
+
+               <dataSource class="com.alibaba.druid.pool.DruidDataSource">
+
+                   <driverClassName>com.mysql.jdbc.Driver</driverClassName>
+
+                   <url>jdbc:mysql://192.168.36.61:3306/airmacau_system?characterEncoding=UTF-8</url>
+
+                   <username>airmacau</username>
+
+                   <password>1234</password>
+               </dataSource>
+           </connectionSource>
+       </appender>-->
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="DEBUG"/>
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="WARN"/>
+        <appender-ref ref="INFO"/>
+        <appender-ref ref="TRACE"/>
+        <!--   <appender-ref ref="DB" /> -->
+    </root>
+</configuration>
